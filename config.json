@@ -1,0 +1,16 @@
+{
+  "token": "",
+  "categoriaId": "",
+  "transcriptChannelId": "",
+  "canalTicket": "",
+  "quantidadeTickets": 0,
+  "autoCall": true,
+  "canalVozId": "",
+  "status": {
+    "status": "online",
+    "activityType": 2,
+    "description": "ZikTicket"
+  },
+  "cargos": [],
+  "ticketsAssumidos": {}
+}
