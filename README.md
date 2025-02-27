@@ -38,12 +38,6 @@ Este bot foi desenvolvido por **SuspectZikata** com o objetivo de melhorar a ges
   }
 }
 ```
-## ⚙️ Atualizações
-
-```diff
-🚀 Versão 1.1  
-+ ✅ Adicionado: AutoCall.  
-```
 
 ## 📜 Licença
 Este projeto foi desenvolvido por **SuspectZikata** e está sob uma licença aberta para uso e modificação conforme necessário.
