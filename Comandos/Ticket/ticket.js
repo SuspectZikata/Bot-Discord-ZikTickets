@@ -63,10 +63,12 @@ module.exports = {
 
             // Adicionar opções aos menus
             if (canalOptions.length > 0) {
-                canalSelect.addOptions(canalOptions);
-                transcriptSelect.addOptions(transcriptOptions);
+                canalSelect.addOptions(canalOptions.slice(0, 25)); // Limita a 25 opções
+                transcriptSelect.addOptions(transcriptOptions.slice(0, 25)); // Limita a 25 opções
             }
-            if (categoriaOptions.length > 0) categoriaSelect.addOptions(categoriaOptions);
+            if (categoriaOptions.length > 0) {
+                categoriaSelect.addOptions(categoriaOptions.slice(0, 25)); // Limita a 25 opções
+            }
 
             let canalRow = new Discord.ActionRowBuilder().addComponents(canalSelect);
             let categoriaRow = new Discord.ActionRowBuilder().addComponents(categoriaSelect);
