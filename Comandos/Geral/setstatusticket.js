@@ -31,13 +31,13 @@ module.exports = {
     options: [],
 
     run: async (client, interaction) => {
-            // Verifica se o usuário tem permissão de administrador
-            if (!interaction.member.permissions.has(Discord.PermissionsBitField.Flags.Administrator)) {
-                return interaction.reply({ 
-                    content: "🚫 Você não tem permissão para usar este comando. Apenas administradores podem usar.", 
-                    ephemeral: true 
-                });
-            }
+        // Verifica se o usuário tem permissão de administrador
+        if (!interaction.member.permissions.has(Discord.PermissionsBitField.Flags.Administrator)) {
+            return interaction.reply({ 
+                content: "🚫 Você não tem permissão para usar este comando. Apenas administradores podem usar.", 
+                ephemeral: true 
+            });
+        }
 
         // Status options with emojis and descriptions
         const statusOptions = [
@@ -196,8 +196,6 @@ module.exports = {
                         embeds: [createEmbed()], 
                         components: createComponents() 
                     });
-                    
-                    
                 }
             } catch (error) {
                 console.error('Erro ao processar interação:', error);
