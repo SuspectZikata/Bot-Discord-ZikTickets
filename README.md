@@ -31,10 +31,14 @@ Este bot foi desenvolvido por **SuspectZikata** com o objetivo de melhorar a ges
     "@discordjs/voice": "^0.18.0",
     "better-sqlite3": "^11.8.1",
     "discord-html-transcripts": "^3.2.0",
-    "discord.js": "^14.17.3",
+    "discord.js": "^14.18.0",
     "fs": "^0.0.1-security",
     "ms": "^2.1.3",
+    "node-fetch": "^3.3.2",
     "wait": "^0.4.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
   }
 }
 ```

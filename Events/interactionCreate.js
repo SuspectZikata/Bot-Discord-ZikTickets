@@ -15,28 +15,31 @@ module.exports = {
   async execute(interaction) {
     if (!interaction.isStringSelectMenu() && !interaction.isButton()) return;
 
-    const createEmbed = (description, user) => new EmbedBuilder()
-      .setColor('Random')
+    // Função para criar embeds com estilo moderno e profissional
+    const createEmbed = (title, description, color = '#0099ff') => new EmbedBuilder()
+      .setColor(color)
+      .setTitle(title)
       .setDescription(description)
-      .setThumbnail(interaction.client.user.displayAvatarURL())
       .setFooter({
-        text: `${interaction.client.user.username} - Ticket.`,
+        text: `${interaction.client.user.username} - Suporte Técnico`,
         iconURL: interaction.client.user.displayAvatarURL()
       });
 
+    // Função para criar linhas de botões
     const createButtonRow = (buttons) => new ActionRowBuilder().addComponents(buttons);
 
+    // Menu de seleção para configurações
     if (interaction.isStringSelectMenu()) {
       switch (interaction.customId) {
         case 'CanalSelecionado':
           config.canalTicket = interaction.values[0];
           fs.writeFileSync('./config.json', JSON.stringify(config, null, 2));
 
-          const canalSelecionado = `📢 Canal selecionado: <#${config.canalTicket}>`;
-          const categoriaSelecionada = config.categoriaId ? `📂 Categoria selecionada: <#${config.categoriaId}>` : "📂 Categoria selecionada: Nenhuma";
-          const transcriptSelecionado = config.transcriptChannelId ? `📝 Canal de transcript selecionado: <#${config.transcriptChannelId}>` : "📝 Canal de transcript selecionado: Nenhum";
+          const canalSelecionado = `📢 **Canal de Tickets:** <#${config.canalTicket}>`;
+          const categoriaSelecionada = config.categoriaId ? `📂 **Categoria de Tickets:** <#${config.categoriaId}>` : "📂 **Categoria de Tickets:** Nenhuma";
+          const transcriptSelecionado = config.transcriptChannelId ? `📝 **Canal de Transcripts:** <#${config.transcriptChannelId}>` : "📝 **Canal de Transcripts:** Nenhum";
 
-          const updatedMessage = `⚙️ **Editor de configuração básica do Ticket Tool.**\n\n` +
+          const updatedMessage = `⚙️ **Configurações do Sistema de Tickets**\n\n` +
             `${canalSelecionado}\n` +
             `${categoriaSelecionada}\n` +
             `${transcriptSelecionado}`;
@@ -48,11 +51,11 @@ module.exports = {
           config.categoriaId = interaction.values[0];
           fs.writeFileSync('./config.json', JSON.stringify(config, null, 2));
 
-          const canalSelecionadoCategoria = config.canalTicket ? `📢 Canal selecionado: <#${config.canalTicket}>` : "📢 Canal selecionado: Nenhum";
-          const categoriaSelecionadaCategoria = `📂 Categoria selecionada: <#${config.categoriaId}>`;
-          const transcriptSelecionadoCategoria = config.transcriptChannelId ? `📝 Canal de transcript selecionado: <#${config.transcriptChannelId}>` : "📝 Canal de transcript selecionado: Nenhum";
+          const canalSelecionadoCategoria = config.canalTicket ? `📢 **Canal de Tickets:** <#${config.canalTicket}>` : "📢 **Canal de Tickets:** Nenhum";
+          const categoriaSelecionadaCategoria = `📂 **Categoria de Tickets:** <#${config.categoriaId}>`;
+          const transcriptSelecionadoCategoria = config.transcriptChannelId ? `📝 **Canal de Transcripts:** <#${config.transcriptChannelId}>` : "📝 **Canal de Transcripts:** Nenhum";
 
-          const updatedMessageCategoria = `⚙️ **Editor de configuração básica do Ticket Tool.**\n\n` +
+          const updatedMessageCategoria = `⚙️ **Configurações do Sistema de Tickets**\n\n` +
             `${canalSelecionadoCategoria}\n` +
             `${categoriaSelecionadaCategoria}\n` +
             `${transcriptSelecionadoCategoria}`;
@@ -64,11 +67,11 @@ module.exports = {
           config.transcriptChannelId = interaction.values[0];
           fs.writeFileSync('./config.json', JSON.stringify(config, null, 2));
 
-          const canalSelecionadoTranscript = config.canalTicket ? `📢 Canal selecionado: <#${config.canalTicket}>` : "📢 Canal selecionado: Nenhum";
-          const categoriaSelecionadaTranscript = config.categoriaId ? `📂 Categoria selecionada: <#${config.categoriaId}>` : "📂 Categoria selecionada: Nenhuma";
-          const transcriptSelecionadoTranscript = `📝 Canal de transcript selecionado: <#${config.transcriptChannelId}>`;
+          const canalSelecionadoTranscript = config.canalTicket ? `📢 **Canal de Tickets:** <#${config.canalTicket}>` : "📢 **Canal de Tickets:** Nenhum";
+          const categoriaSelecionadaTranscript = config.categoriaId ? `📂 **Categoria de Tickets:** <#${config.categoriaId}>` : "📂 **Categoria de Tickets:** Nenhuma";
+          const transcriptSelecionadoTranscript = `📝 **Canal de Transcripts:** <#${config.transcriptChannelId}>`;
 
-          const updatedMessageTranscript = `⚙️ **Editor de configuração básica do Ticket Tool.**\n\n` +
+          const updatedMessageTranscript = `⚙️ **Configurações do Sistema de Tickets**\n\n` +
             `${canalSelecionadoTranscript}\n` +
             `${categoriaSelecionadaTranscript}\n` +
             `${transcriptSelecionadoTranscript}`;
@@ -78,44 +81,37 @@ module.exports = {
       }
     }
 
+    // Interações com botões
     if (interaction.isButton()) {
       switch (interaction.customId) {
         case 'EnviarPainel':
           if (!config.canalTicket) {
             return interaction.reply({
-              content: "❌ Nenhum canal configurado para enviar o painel. Configure um canal primeiro.",
+              embeds: [createEmbed('❌ Erro de Configuração', 'Nenhum canal configurado para enviar o painel. Configure um canal primeiro.', '#ff0000')],
               ephemeral: true
             });
           }
 
-          const embed = new EmbedBuilder()
-            .setColor('Random')
-            .setDescription('Para criar um ticket, clique em \n ** 📩 Criar Ticket **')
-            .setThumbnail(interaction.client.user.displayAvatarURL())
-            .setFooter({
-              text: `${interaction.client.user.username} - Ticket.`,
-              iconURL: interaction.client.user.displayAvatarURL()
-            });
+          const embed = createEmbed('🎟️ Suporte Técnico', 'Para solicitar suporte técnico, clique no botão abaixo para abrir um ticket.');
 
-          const row = new ActionRowBuilder().addComponents(
+          const row = createButtonRow([
             new ButtonBuilder()
-              .setStyle(ButtonStyle.Secondary)
+              .setStyle(ButtonStyle.Primary)
               .setCustomId('Criar')
-              .setLabel('Criar Ticket')
-              .setEmoji('📩')
-          );
+              .setLabel('Abrir Ticket')
+          ]);
 
           const channel = interaction.guild.channels.cache.get(config.canalTicket);
           if (!channel) {
             return interaction.reply({
-              content: "❌ Canal configurado não encontrado. Verifique as configurações.",
+              embeds: [createEmbed('❌ Erro de Configuração', 'Canal configurado não encontrado. Verifique as configurações.', '#ff0000')],
               ephemeral: true
             });
           }
 
           await channel.send({ embeds: [embed], components: [row] });
           await interaction.reply({
-            content: `✅ Painel de tickets enviado com sucesso para o canal <#${config.canalTicket}>.`,
+            embeds: [createEmbed('✅ Painel Enviado', `Painel de tickets enviado com sucesso para o canal <#${config.canalTicket}>.`, '#00ff00')],
             ephemeral: true
           });
           break;
@@ -123,7 +119,7 @@ module.exports = {
         case 'Criar':
           if (interaction.guild.channels.cache.find(c => c.topic === interaction.user.id)) {
             return interaction.reply({
-              content: "> **Aviso:** Limite de tickets atingido. Você já tem 1 ticket aberto dos 1 permitidos para este painel.",
+              embeds: [createEmbed('⚠️ Limite de Tickets', 'Você já tem um ticket aberto. Feche o ticket existente antes de abrir um novo.', '#ffcc00')],
               ephemeral: true
             });
           }
@@ -151,164 +147,128 @@ module.exports = {
             ]
           });
 
-          const ticketEmbed = createEmbed('🎟️ **Ticket Aberto!** 🚀\nNossa equipe de suporte estará com você em breve!\nEnquanto isso, já adiante as informações necessárias para agilizar seu atendimento. ⏳💬\n\n🔄 Ticket disponível para suporte.');
+          const ticketEmbed = createEmbed('🎟️ Ticket Aberto', 'Nossa equipe de suporte estará com você em breve. Por favor, forneça detalhes sobre o seu problema ou solicitação.');
           const ticketRow = createButtonRow([
             new ButtonBuilder()
               .setStyle(ButtonStyle.Success)
               .setCustomId('Assumir')
-              .setLabel('Assumir')
-              .setEmoji('👋'),
+              .setLabel('Assumir Ticket'),
             new ButtonBuilder()
-              .setStyle(ButtonStyle.Secondary)
+              .setStyle(ButtonStyle.Danger)
               .setCustomId('Fechar')
-              .setLabel('Fechar')
-              .setEmoji('🔒')
+              .setLabel('Fechar Ticket')
           ]);
 
           newChannel.setTopic(interaction.user.id);
           const cargosMencionados = config.cargos && config.cargos.length > 0 
-          ? `\n<@&${config.cargos.join('>, <@&')}>` // Menciona os cargos
-          : ''; // Se não houver cargos, não menciona nada
+            ? `\n<@&${config.cargos.join('>, <@&')}>`
+            : '';
+
           await newChannel.send({
-              content: `${interaction.user} Bem-vindo.${cargosMencionados}`, // Adiciona os cargos mencionados
-              embeds: [ticketEmbed],
-              components: [ticketRow]
+            content: `${interaction.user} Bem-vindo ao seu ticket.${cargosMencionados}`,
+            embeds: [ticketEmbed],
+            components: [ticketRow]
           });
 
           await interaction.editReply({
-            content: `Ticket criado ${newChannel}`,
+            embeds: [createEmbed('✅ Ticket Criado', `Seu ticket foi criado com sucesso: ${newChannel}`, '#00ff00')],
             ephemeral: true
           });
           break;
 
         case 'Assumir':
-          try {
-            if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
-              return await interaction.reply({
-                content: "🚫 Apenas administradores podem assumir tickets!",
-                ephemeral: true
-              });
-            }
-
-            if (!config.ticketsAssumidos) {
-              config.ticketsAssumidos = {};
-            }
-
-            if (!config.ticketsAssumidos[interaction.user.id]) {
-              config.ticketsAssumidos[interaction.user.id] = {
-                nome: interaction.user.username,
-                quantidade: 0
-              };
-            }
-
-            config.ticketsAssumidos[interaction.user.id].quantidade += 1;
-            fs.writeFileSync('./config.json', JSON.stringify(config, null, 2));
-
-            const assumirEmbed = createEmbed(`🎟️ **Ticket Aberto!** 🚀\nNossa equipe de suporte estará com você em breve!\nEnquanto isso, já adiante as informações necessárias para agilizar seu atendimento. ⏳💬\n\n👋 Ticket assumido por: ${interaction.user}`);
-            const assumirRow = createButtonRow([
-              new ButtonBuilder()
-                .setStyle(ButtonStyle.Success)
-                .setCustomId('Assumir')
-                .setLabel('Assumir')
-                .setEmoji('👋')
-                .setDisabled(true),
-              new ButtonBuilder()
-                .setStyle(ButtonStyle.Danger)
-                .setCustomId('Abdicar')
-                .setLabel('Abdicar')
-                .setEmoji('🔄'),
-              new ButtonBuilder()
-                .setStyle(ButtonStyle.Secondary)
-                .setCustomId('Fechar')
-                .setLabel('Fechar')
-                .setEmoji('🔒')
-            ]);
-
-            await interaction.message.edit({
-              embeds: [assumirEmbed],
-              components: [assumirRow]
-            });
-
-            await interaction.reply({
-              content: `Ticket assumido com sucesso! Por favor, ${interaction.user.toString()} seja paciente e respeitoso.`,
+          if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+            return interaction.reply({
+              embeds: [createEmbed('⚠️ Permissão Negada', 'Apenas administradores podem assumir tickets.', '#ffcc00')],
               ephemeral: true
             });
-
-          } catch (error) {
-            console.error("Erro ao assumir ticket:", error);
-            if (!interaction.replied && !interaction.deferred) {
-              await interaction.reply({
-                content: "Ocorreu um erro ao assumir o ticket. Tente novamente.",
-                ephemeral: true
-              });
-            }
           }
+
+          if (!config.ticketsAssumidos) {
+            config.ticketsAssumidos = {};
+          }
+
+          if (!config.ticketsAssumidos[interaction.user.id]) {
+            config.ticketsAssumidos[interaction.user.id] = {
+              nome: interaction.user.username,
+              quantidade: 0
+            };
+          }
+
+          config.ticketsAssumidos[interaction.user.id].quantidade += 1;
+          fs.writeFileSync('./config.json', JSON.stringify(config, null, 2));
+
+          const assumirEmbed = createEmbed('👋 Ticket Assumido', `Este ticket foi assumido por ${interaction.user.username}.`);
+          const assumirRow = createButtonRow([
+            new ButtonBuilder()
+              .setStyle(ButtonStyle.Success)
+              .setCustomId('Assumir')
+              .setLabel('Assumir')
+              .setDisabled(true),
+            new ButtonBuilder()
+              .setStyle(ButtonStyle.Danger)
+              .setCustomId('Abdicar')
+              .setLabel('Abdicar'),
+            new ButtonBuilder()
+              .setStyle(ButtonStyle.Secondary)
+              .setCustomId('Fechar')
+              .setLabel('Fechar')
+          ]);
+
+          await interaction.message.edit({ embeds: [assumirEmbed], components: [assumirRow] });
+          await interaction.reply({
+            embeds: [createEmbed('✅ Ticket Assumido', 'Você assumiu o ticket com sucesso.', '#00ff00')],
+            ephemeral: true
+          });
           break;
 
         case 'Abdicar':
-          try {
-            if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
-              return await interaction.reply({
-                content: "🚫 Apenas administradores podem abdicar de tickets!",
-                ephemeral: true
-              });
-            }
-
-            if (!config.ticketsAssumidos || !config.ticketsAssumidos[interaction.user.id]) {
-              return await interaction.reply({
-                content: "Você não possui nenhum ticket assumido para abdicar.",
-                ephemeral: true
-              });
-            }
-
-            config.ticketsAssumidos[interaction.user.id].quantidade = Math.max(0, config.ticketsAssumidos[interaction.user.id].quantidade - 1);
-            fs.writeFileSync('./config.json', JSON.stringify(config, null, 2));
-
-            const abdicarEmbed = createEmbed(`🎟️ **Ticket Aberto!** 🚀\nNossa equipe de suporte estará com você em breve!\nEnquanto isso, já adiante as informações necessárias para agilizar seu atendimento. ⏳💬\n\n🔄 Ticket disponível para suporte.`);
-            const abdicarRow = createButtonRow([
-              new ButtonBuilder()
-                .setStyle(ButtonStyle.Success)
-                .setCustomId('Assumir')
-                .setLabel('Assumir')
-                .setEmoji('👋')
-                .setDisabled(false),
-              new ButtonBuilder()
-                .setStyle(ButtonStyle.Secondary)
-                .setCustomId('Fechar')
-                .setLabel('Fechar')
-                .setEmoji('🔒')
-            ]);
-
-            await interaction.message.edit({
-              embeds: [abdicarEmbed],
-              components: [abdicarRow]
-            });
-
-            await interaction.reply({
-              content: `Você abdicou do ticket com sucesso. O ticket está disponível para outro membro da equipe assumir.`,
+          if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+            return interaction.reply({
+              embeds: [createEmbed('⚠️ Permissão Negada', 'Apenas administradores podem abdicar de tickets.', '#ffcc00')],
               ephemeral: true
             });
-
-          } catch (error) {
-            console.error("Erro ao abdicar do ticket:", error);
-            if (!interaction.replied && !interaction.deferred) {
-              await interaction.reply({
-                content: "Ocorreu um erro ao abdicar do ticket. Tente novamente.",
-                ephemeral: true
-              });
-            }
           }
+
+          if (!config.ticketsAssumidos || !config.ticketsAssumidos[interaction.user.id]) {
+            return interaction.reply({
+              embeds: [createEmbed('⚠️ Nenhum Ticket Assumido', 'Você não possui nenhum ticket assumido para abdicar.', '#ffcc00')],
+              ephemeral: true
+            });
+          }
+
+          config.ticketsAssumidos[interaction.user.id].quantidade = Math.max(0, config.ticketsAssumidos[interaction.user.id].quantidade - 1);
+          fs.writeFileSync('./config.json', JSON.stringify(config, null, 2));
+
+          const abdicarEmbed = createEmbed('🔄 Ticket Abdicado', 'Este ticket está disponível para outro membro da equipe assumir.');
+          const abdicarRow = createButtonRow([
+            new ButtonBuilder()
+              .setStyle(ButtonStyle.Success)
+              .setCustomId('Assumir')
+              .setLabel('Assumir')
+              .setDisabled(false),
+            new ButtonBuilder()
+              .setStyle(ButtonStyle.Danger)
+              .setCustomId('Fechar')
+              .setLabel('Fechar')
+          ]);
+
+          await interaction.message.edit({ embeds: [abdicarEmbed], components: [abdicarRow] });
+          await interaction.reply({
+            embeds: [createEmbed('✅ Ticket Abdicado', 'Você abdicou do ticket com sucesso.', '#00ff00')],
+            ephemeral: true
+          });
           break;
 
         case 'Fechar':
           if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
             return interaction.reply({
-              content: "🚫 Apenas administradores podem fechar tickets!",
+              embeds: [createEmbed('⚠️ Permissão Negada', 'Apenas administradores podem fechar tickets.', '#ffcc00')],
               ephemeral: true
             });
           }
 
-          const fecharRow = createButtonRow([
+            const fecharRow = createButtonRow([
             new ButtonBuilder()
               .setStyle(ButtonStyle.Danger)
               .setCustomId('Confirmar')
@@ -317,57 +277,51 @@ module.exports = {
               .setStyle(ButtonStyle.Secondary)
               .setCustomId('Cancelar')
               .setLabel('Cancelar')
-          ]);
+            ]);
 
-          await interaction.reply({
-            content: "Tem certeza que deseja fechar este ticket?",
+            await interaction.reply({
+            embeds: [createEmbed('⚠️ Confirmar Fechamento', 'Tem certeza de que deseja fechar este ticket?', '#ffcc00')],
             components: [fecharRow]
-          });
-          break;
+            });
+            break;
 
-        case 'Cancelar':
-          if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+          case 'Cancelar':
+            await interaction.update({
+            embeds: [createEmbed('✅ Fechamento Cancelado', 'O fechamento do ticket foi cancelado.', '#00ff00')],
+            components: []
+            });
+            break;
+
+          case 'Confirmar':
+            if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
             return interaction.reply({
-              content: "🚫 Apenas administradores podem cancelar esta ação!",
+              embeds: [createEmbed('⚠️ Permissão Negada', 'Apenas administradores podem fechar tickets.', '#ffcc00')],
               ephemeral: true
             });
-          }
-          await interaction.message.delete();
-          break;
+            }
 
-        case 'Confirmar':
-          if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
-            return interaction.reply({
-              content: "🚫 Apenas administradores podem fechar tickets!",
-              ephemeral: true
-            });
-          }
-
-          try {
-            const combinedEmbed = createEmbed(`Ticket fechado por ${interaction.user}.\n\nControles de ticket da equipe de suporte.`);
+            try {
+            const combinedEmbed = createEmbed('🔒 Ticket Fechado', `Este ticket foi fechado por ${interaction.user.username}.`);
 
             const confirmarRow = createButtonRow([
               new ButtonBuilder()
-                .setStyle(ButtonStyle.Secondary)
-                .setCustomId('Transcrição')
-                .setLabel('Transcrição')
-                .setEmoji('📑'),
+              .setStyle(ButtonStyle.Secondary)
+              .setCustomId('Transcrição')
+              .setLabel('Gerar Transcript'),
               new ButtonBuilder()
-                .setStyle(ButtonStyle.Secondary)
-                .setCustomId('Abrir')
-                .setLabel('Abrir')
-                .setEmoji('🔓'),
+              .setStyle(ButtonStyle.Secondary)
+              .setCustomId('Abrir')
+              .setLabel('Reabrir Ticket'),
               new ButtonBuilder()
-                .setStyle(ButtonStyle.Secondary)
-                .setCustomId('Excluir')
-                .setLabel('Excluir')
-                .setEmoji('⛔')
+              .setStyle(ButtonStyle.Danger)
+              .setCustomId('Excluir')
+              .setLabel('Excluir Ticket')
             ]);
 
             await interaction.message.delete();
             await interaction.channel.setName(`fechado-${interaction.channel.name.slice(-4)}`);
 
-            const response = await interaction.channel.send({
+            await interaction.channel.send({
               embeds: [combinedEmbed],
               components: [confirmarRow]
             });
@@ -376,7 +330,7 @@ module.exports = {
             console.error("Erro ao fechar ticket:", error);
             if (!interaction.replied && !interaction.deferred) {
               await interaction.reply({
-                content: "Ocorreu um erro ao fechar o ticket. Tente novamente.",
+                embeds: [createEmbed('❌ Erro ao Fechar Ticket', 'Ocorreu um erro ao fechar o ticket. Tente novamente.', '#ff0000')],
                 ephemeral: true
               });
             }
@@ -386,7 +340,7 @@ module.exports = {
         case 'Transcrição':
           if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
             return interaction.reply({
-              content: "🚫 Apenas administradores podem gerar transcripts!",
+              embeds: [createEmbed('⚠️ Permissão Negada', 'Apenas administradores podem gerar transcripts.', '#ffcc00')],
               ephemeral: true
             });
           }
@@ -402,12 +356,12 @@ module.exports = {
                   files: [transcriptFile]
                 });
                 await interaction.reply({
-                  content: "Transcript enviado com sucesso para o canal configurado!",
+                  embeds: [createEmbed('✅ Transcript Enviado', 'O transcript foi enviado com sucesso para o canal configurado.', '#00ff00')],
                   ephemeral: true
                 });
               } else {
                 await interaction.reply({
-                  content: "Canal de transcript não encontrado. Enviando no canal atual:",
+                  embeds: [createEmbed('⚠️ Canal de Transcript Não Encontrado', 'Enviando o transcript no canal atual.', '#ffcc00')],
                   files: [transcriptFile],
                   ephemeral: true
                 });
@@ -421,7 +375,7 @@ module.exports = {
           } catch (error) {
             console.error("Erro ao gerar transcript:", error);
             await interaction.reply({
-              content: "Ocorreu um erro ao gerar o transcript. Tente novamente.",
+              embeds: [createEmbed('❌ Erro ao Gerar Transcript', 'Ocorreu um erro ao gerar o transcript. Tente novamente.', '#ff0000')],
               ephemeral: true
             });
           }
@@ -430,12 +384,12 @@ module.exports = {
         case 'Abrir':
           if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
             return interaction.reply({
-              content: "🚫 Apenas administradores podem reabrir tickets!",
+              embeds: [createEmbed('⚠️ Permissão Negada', 'Apenas administradores podem reabrir tickets.', '#ffcc00')],
               ephemeral: true
             });
           }
 
-          const abrirEmbed = createEmbed(`Ticket aberto por ${interaction.user}.`);
+          const abrirEmbed = createEmbed('🔓 Ticket Reaberto', `Este ticket foi reaberto por ${interaction.user.username}.`);
 
           await interaction.message.delete();
           await interaction.channel.permissionOverwrites.edit(
@@ -448,7 +402,7 @@ module.exports = {
         case 'Excluir':
           if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
             return interaction.reply({
-              content: "🚫 Apenas administradores podem excluir tickets!",
+              embeds: [createEmbed('⚠️ Permissão Negada', 'Apenas administradores podem excluir tickets.', '#ffcc00')],
               ephemeral: true
             });
           }
