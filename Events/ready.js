@@ -1,65 +1,39 @@
-const Discord = require('discord.js');
-const client = require('../index');
-const config = require('../config.json');
-const { joinVoiceChannel } = require('@discordjs/voice');
-const updateBotStatus = require('../Comandos/Geral/setstatusticket').updateBotStatus;
+const { ActivityType } = require('discord.js');
+const fs = require('fs');
+const path = require('path');
 
-client.on('ready', async () => {
-    console.log(`🔥 Estou online em ${client.user.username}!`);
-
-    try {
-        // Verifica se existe configuração de status
-        if (config.status) {
-            // Aguarda um momento para garantir que o bot está totalmente pronto
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
-            // Usa a função updateBotStatus do comando setstatus
-            const success = await updateBotStatus(client, config.status);
-
-            if (success) {
-                console.log('✅ Status carregado com sucesso:', {
-                    status: config.status.status,
-                    description: config.status.description,
-                    type: config.status.activityType
-                });
-            } else {
-                console.error('❌ Erro ao carregar o status do bot');
-            }
-        } else {
-            // Define um status padrão caso não haja configuração
-            const defaultStatus = {
-                status: 'online',
-                description: 'Estou online!',
-                activityType: 0
-            };
-
-            await updateBotStatus(client, defaultStatus);
-            console.log('ℹ️ Status padrão definido');
-        }
-
-        // Verifica se o AutoCall está ativado e se há um canal de voz configurado
-        if (config.autoCall && config.canalVozId) {
-            const canalVoz = client.channels.cache.get(config.canalVozId);
-
-            if (canalVoz && canalVoz.type === Discord.ChannelType.GuildVoice) {
-                try {
-                    // Entra no canal de voz
-                    joinVoiceChannel({
-                        channelId: canalVoz.id,
-                        guildId: canalVoz.guild.id,
-                        adapterCreator: canalVoz.guild.voiceAdapterCreator,
-                    });
-                    console.log(`✅ Entrei no canal de voz [ ${canalVoz.name} ]!`);
-                } catch (error) {
-                    console.error('❌ Erro ao entrar no canal de voz:', error);
-                }
-            } else {
-                console.error('❌ Canal de voz inválido ou não encontrado.');
-            }
-        } else {
-            console.log('ℹ️ AutoCall desativado ou canal de voz não configurado.');
-        }
-    } catch (error) {
-        console.error('❌ Erro ao carregar status do bot:', error);
+module.exports = {
+  name: 'ready',
+  once: true,
+  async execute(client) {
+    console.log(`Logado como ${client.user.tag}!`);
+    
+    // Definir atividade do bot
+    client.user.setPresence({
+      activities: [{ name: 'tickets de suporte', type: ActivityType.Watching }],
+      status: 'online',
+    });
+    
+    // Criar diretório do banco de dados se não existir
+    const dbDir = path.join(__dirname, '../database');
+    if (!fs.existsSync(dbDir)) {
+      fs.mkdirSync(dbDir);
     }
-});
+    
+    // Criar tickets.json se não existir
+    const ticketsPath = path.join(dbDir, 'tickets.json');
+    if (!fs.existsSync(ticketsPath)) {
+      const defaultData = {
+        tickets: [],
+        stats: {
+          totalCreated: 0,
+          totalClosed: 0,
+          averageResolutionTime: 0
+        }
+      };
+      fs.writeFileSync(ticketsPath, JSON.stringify(defaultData, null, 2), 'utf8');
+    }
+    
+    console.log('Bot ZikTickets está pronto!');
+  }
+};

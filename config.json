@@ -1,16 +1,37 @@
 {
-  "token": "",
-  "categoriaId": "",
-  "transcriptChannelId": "",
-  "canalTicket": "",
-  "quantidadeTickets": 0,
-  "autoCall": true,
-  "canalVozId": "",
-  "status": {
-    "status": "online",
-    "activityType": 2,
-    "description": "ZikTicket"
+  "ticketTypes": [
+    {
+      "id": "support",
+      "label": "Suporte",
+      "emoji": "🔧",
+      "description": "Obtenha ajuda com problemas técnicos"
+    },
+    {
+      "id": "sales",
+      "label": "Vendas",
+      "emoji": "💰",
+      "description": "Fale com nossa equipe de vendas"
+    },
+    {
+      "id": "questions",
+      "label": "Dúvidas",
+      "emoji": "❓",
+      "description": "Tire suas dúvidas gerais"
+    }
+  ],
+  "ticketSettings": {
+    "categoryId": "",
+    "logChannelId": "",
+    "supportRoleId": "",
+    "adminRoleId": "",
+    "maxTicketsPerUser": 3,
+    "inactivityTimeout": 86400000,
+    "transcriptEnabled": true
   },
-  "cargos": [],
-  "ticketsAssumidos": {}
+  "messages": {
+    "welcomeMessage": "Bem-vindo ao sistema de tickets! Selecione uma opção abaixo para abrir um ticket.",
+    "ticketCreated": "Seu ticket foi criado! Um membro da equipe irá atendê-lo em breve.",
+    "ticketClosed": "Este ticket foi fechado. Obrigado por utilizar nosso sistema de suporte!",
+    "ticketInactive": "Este ticket será fechado automaticamente em 24 horas devido à inatividade."
+  }
 }

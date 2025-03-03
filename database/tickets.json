@@ -1,0 +1,8 @@
+{
+  "tickets": [],
+  "stats": {
+    "totalCreated": 0,
+    "totalClosed": 0,
+    "averageResolutionTime": 0
+  }
+}
