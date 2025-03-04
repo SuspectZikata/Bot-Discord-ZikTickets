@@ -1,6 +1,7 @@
 const { 
   ActionRowBuilder, 
   StringSelectMenuBuilder,
+  MessageFlags,
   EmbedBuilder
 } = require('discord.js');
 const config = require('../../config.json');
@@ -16,7 +17,7 @@ module.exports = {
       if (!ticket) {
         return interaction.reply({
           content: 'Este canal não é um ticket válido.',
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         });
       }
       
@@ -25,7 +26,7 @@ module.exports = {
       if (!supportRole) {
         return interaction.reply({
           content: 'Cargo de suporte não encontrado. Por favor, configure o sistema de tickets novamente.',
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         });
       }
       
@@ -37,7 +38,7 @@ module.exports = {
       if (supportMembers.size === 0) {
         return interaction.reply({
           content: 'Não há membros da equipe de suporte disponíveis para transferência.',
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         });
       }
       
@@ -62,13 +63,13 @@ module.exports = {
       await interaction.reply({
         content: 'Selecione um membro da equipe para transferir este ticket:',
         components: [row],
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
     } catch (error) {
       console.error('Erro ao mostrar a seleção de transferência:', error);
       await interaction.reply({
         content: 'Ocorreu um erro ao mostrar as opções de transferência. Por favor, tente novamente.',
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
     }
   }

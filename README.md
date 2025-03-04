@@ -47,11 +47,11 @@ Este bot foi desenvolvido por **SuspectZikata** com o objetivo de melhorar a ges
 ```json
 {
   "dependencies": {
-    "discord.js": "^14.14.1",
-    "dotenv": "^16.3.1",
+    "discord.js": "^14.18.0",
+    "dotenv": "^16.4.7",
     "fs": "^0.0.1-security",
-    "path": "^0.12.7",
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.1.9",
+    "path": "^0.12.7"
   }
 }
 ```

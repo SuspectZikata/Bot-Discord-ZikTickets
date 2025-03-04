@@ -10,7 +10,7 @@ module.exports = {
     
     // Definir atividade do bot
     client.user.setPresence({
-      activities: [{ name: 'tickets de suporte', type: ActivityType.Watching }],
+      activities: [{ name: 'ZikTickets', type: ActivityType.Watching }],
       status: 'online',
     });
     

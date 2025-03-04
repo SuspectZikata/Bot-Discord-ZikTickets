@@ -791,6 +791,63 @@ function formatDuration( ms) {
   }
 }
 
+function getHandlerRankings() {
+  const db = loadTicketDB();
+  const now = new Date();
+  const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+  // Função auxiliar para contar tickets por handler
+  function countTicketsByHandler(tickets) {
+    const handlerCounts = {};
+    
+    tickets.forEach(ticket => {
+      if (ticket.claimedBy) {
+        handlerCounts[ticket.claimedBy] = (handlerCounts[ticket.claimedBy] || 0) + 1;
+      }
+    });
+
+    return Object.entries(handlerCounts)
+      .map(([userId, count]) => ({ userId, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10); // Top 10 handlers
+  }
+
+  // Rankings total
+  const totalRankings = countTicketsByHandler(db.tickets);
+
+  // Rankings mensais
+  const monthlyTickets = db.tickets.filter(ticket => 
+    new Date(ticket.createdAt) >= monthAgo
+  );
+  const monthlyRankings = countTicketsByHandler(monthlyTickets);
+
+  // Rankings semanais
+  const weeklyTickets = db.tickets.filter(ticket => 
+    new Date(ticket.createdAt) >= weekAgo
+  );
+  const weeklyRankings = countTicketsByHandler(weeklyTickets);
+
+  return {
+    total: totalRankings,
+    monthly: monthlyRankings,
+    weekly: weeklyRankings
+  };
+}
+
+function resetTicketData() {
+  const defaultData = {
+    tickets: [],
+    stats: {
+      totalCreated: 0,
+      totalClosed: 0,
+      averageResolutionTime: 0
+    }
+  };
+
+  return saveTicketDB(defaultData);
+}
+
 module.exports = {
   createTicket,
   closeTicket,
@@ -803,5 +860,7 @@ module.exports = {
   getTicketByChannelId,
   getTicketById,
   getUserTickets,
-  getTicketStats
+  getTicketStats,
+  getHandlerRankings,
+  resetTicketData
 };

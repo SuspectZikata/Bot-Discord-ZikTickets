@@ -1,6 +1,7 @@
 const { 
   ActionRowBuilder, 
   StringSelectMenuBuilder,
+  MessageFlags,
   EmbedBuilder
 } = require('discord.js');
 const config = require('../../config.json');
@@ -36,13 +37,13 @@ module.exports = {
       await interaction.reply({
         embeds: [embed],
         components: [row],
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
     } catch (error) {
       console.error('Erro ao criar a seleção de tickets:', error);
       await interaction.reply({
         content: 'Ocorreu um erro ao criar o menu de seleção de tickets. Por favor, tente novamente.',
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
     }
   }

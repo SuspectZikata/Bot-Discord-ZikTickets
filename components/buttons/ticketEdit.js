@@ -2,6 +2,7 @@ const {
   ModalBuilder, 
   TextInputBuilder, 
   TextInputStyle, 
+  MessageFlags,
   ActionRowBuilder 
 } = require('discord.js');
 
@@ -16,7 +17,7 @@ module.exports = {
       if (!ticket) {
         return interaction.reply({
           content: 'Este canal não é um ticket válido.',
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         });
       }
       
@@ -53,7 +54,7 @@ module.exports = {
       console.error('Erro ao mostrar modal de edição de ticket:', error);
       await interaction.reply({
         content: 'Ocorreu um erro ao abrir o formulário de edição. Por favor, tente novamente.',
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
     }
   }

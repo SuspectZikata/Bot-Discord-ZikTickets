@@ -2,6 +2,7 @@ const {
   ModalBuilder, 
   TextInputBuilder, 
   TextInputStyle, 
+  MessageFlags,
   ActionRowBuilder 
 } = require('discord.js');
 
@@ -32,7 +33,7 @@ module.exports = {
       console.error('Erro ao mostrar o modal de adicionar usuário:', error);
       await interaction.reply({
         content: 'Ocorreu um erro ao abrir o formulário. Por favor, tente novamente.',
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
     }
   }

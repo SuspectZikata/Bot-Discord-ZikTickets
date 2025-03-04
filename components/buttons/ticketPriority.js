@@ -1,5 +1,6 @@
 const { 
   ActionRowBuilder, 
+  MessageFlags,
   StringSelectMenuBuilder
 } = require('discord.js');
 
@@ -45,13 +46,13 @@ module.exports = {
       await interaction.reply({
         content: 'Selecione a prioridade para este ticket:',
         components: [row],
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
     } catch (error) {
       console.error('Erro ao mostrar a seleção de prioridade:', error);
       await interaction.reply({
         content: 'Ocorreu um erro ao mostrar as opções de prioridade. Por favor, tente novamente.',
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
     }
   }

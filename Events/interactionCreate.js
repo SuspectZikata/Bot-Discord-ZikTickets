@@ -1,4 +1,4 @@
-const { InteractionType } = require('discord.js');
+const { InteractionType, MessageFlags } = require('discord.js');
 
 module.exports = {
   name: 'interactionCreate',
@@ -15,7 +15,7 @@ module.exports = {
         console.error(error);
         await interaction.reply({
           content: 'Ocorreu um erro ao executar este comando!',
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         });
       }
     }
@@ -33,7 +33,7 @@ module.exports = {
         console.error(error);
         await interaction.reply({
           content: 'Ocorreu um erro ao processar este botão!',
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         });
       }
     }
@@ -51,7 +51,7 @@ module.exports = {
         console.error(error);
         await interaction.reply({
           content: 'Ocorreu um erro ao processar este menu!',
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         });
       }
     }
@@ -69,7 +69,7 @@ module.exports = {
         console.error(error);
         await interaction.reply({
           content: 'Ocorreu um erro ao processar este formulário!',
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         });
       }
     }

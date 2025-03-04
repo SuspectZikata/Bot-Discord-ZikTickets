@@ -6,6 +6,7 @@ const {
   EmbedBuilder,
   ActionRowBuilder,
   ButtonBuilder,
+  MessageFlags,
   ButtonStyle
 } = require('discord.js');
 const fs = require('fs');
@@ -18,32 +19,32 @@ module.exports = {
   type: ApplicationCommandType.ChatInput,
   options: [
     {
-      name: 'channel',
+      name: 'canal',
       description: 'Canal onde o painel de tickets será enviado',
       type: ApplicationCommandOptionType.Channel,
       required: true,
     },
     {
-      name: 'category',
+      name: 'categoria',
       description: 'Categoria onde os tickets serão criados',
       type: ApplicationCommandOptionType.Channel,
       channelTypes: [ChannelType.GuildCategory],
       required: true,
     },
     {
-      name: 'log_channel',
-      description: 'Canal onde os logs de tickets serão enviados',
+      name: 'canal_transcripts',
+      description: 'Canal onde os transcipts de tickets serão enviados',
       type: ApplicationCommandOptionType.Channel,
       required: true,
     },
     {
-      name: 'support_role',
+      name: 'ticket_cargo',
       description: 'Cargo da equipe de suporte',
       type: ApplicationCommandOptionType.Role,
       required: true,
     },
     {
-      name: 'admin_role',
+      name: 'admin_cargo',
       description: 'Cargo de administrador',
       type: ApplicationCommandOptionType.Role,
       required: true,
@@ -52,15 +53,15 @@ module.exports = {
   defaultMemberPermissions: PermissionFlagsBits.Administrator,
 
   run: async (client, interaction) => {
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
     
     try {
       // Obter opções
-      const channel = interaction.options.getChannel('channel');
-      const category = interaction.options.getChannel('category');
-      const logChannel = interaction.options.getChannel('log_channel');
-      const supportRole = interaction.options.getRole('support_role');
-      const adminRole = interaction.options.getRole('admin_role');
+      const channel = interaction.options.getChannel('canal');
+      const category = interaction.options.getChannel('categoria');
+      const logChannel = interaction.options.getChannel('canal_transcripts');
+      const supportRole = interaction.options.getRole('ticket_cargo');
+      const adminRole = interaction.options.getRole('admin_cargo');
       
       // Validar tipos de canal
       if (channel.type !== ChannelType.GuildText) {
@@ -115,13 +116,13 @@ module.exports = {
       // Responder à interação
       await interaction.editReply({
         content: `Sistema de tickets configurado com sucesso! Painel enviado em ${channel}.`,
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
     } catch (error) {
       console.error('Erro ao configurar o sistema de tickets:', error);
       await interaction.editReply({
         content: 'Ocorreu um erro ao configurar o sistema de tickets. Por favor, tente novamente.',
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
     }
   }
