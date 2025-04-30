@@ -209,7 +209,7 @@ async function createTicket(interaction, ticketType) {
     
     return {
       success: true,
-      message: `Ticket criado com sucesso! Acesse-o em ${channel}.`,
+      message: 'Ticket criado com sucesso!',
       channel: channel,
       flags: MessageFlags.Ephemeral
     };
@@ -819,7 +819,7 @@ function getTicketStats() {
 }
 
 // Função auxiliar para formatar duração
-function formatDuration(ms) {
+function formatDuration( ms) {
   const seconds = Math.floor(ms / 1000);
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
