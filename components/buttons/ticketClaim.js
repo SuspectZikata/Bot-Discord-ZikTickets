@@ -1,4 +1,6 @@
 const { claimTicket } = require('../../utils/ticketManager');
+const { PermissionFlagsBits, MessageFlags } = require('discord.js');
+const config = require('../../config.json');
 
 module.exports = {
   customId: 'ticket_claim',
@@ -12,6 +14,15 @@ module.exports = {
       
       if (!ticket) {
         return interaction.editReply('Este canal não é um ticket válido.');
+      }
+
+      // Verificar permissões
+      const member = interaction.member;
+      const hasPermission = member.permissions.has(PermissionFlagsBits.ManageChannels) || 
+                           member.roles.cache.has(config.ticketSettings.adminRoleId);
+      
+      if (!hasPermission) {
+        return interaction.editReply('Você não tem permissão Assumir este ticket.');
       }
       
       // Atender ticket

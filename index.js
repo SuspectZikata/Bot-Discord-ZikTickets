@@ -49,7 +49,7 @@ for (const file of eventFiles) {
     client.on(event.name, (...args) => event.execute(client, ...args));
   }
   
-  console.log(`Evento carregado: ${event.name}`);
+  // console.log(`Evento carregado: ${event.name}`);
 }
 
 // Carregar componentes (botões, menus de seleção, modais)
@@ -75,7 +75,7 @@ for (const folder of componentFolders) {
           client.modals.set(component.customId, component);
           break;
       }
-      console.log(`Componente carregado: ${component.customId}`);
+      // console.log(`Componente carregado: ${component.customId}`);
     } else {
       console.log(`[AVISO] O componente em ${filePath} está faltando a propriedade "customId" ou "execute" requerida.`);
     }

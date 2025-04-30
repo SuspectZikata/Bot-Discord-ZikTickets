@@ -1,13 +1,25 @@
 const { 
   ActionRowBuilder, 
   MessageFlags,
-  StringSelectMenuBuilder
+  StringSelectMenuBuilder,
+  PermissionFlagsBits
 } = require('discord.js');
+const config = require('../../config.json');
 
 module.exports = {
   customId: 'ticket_priority',
   async execute(client, interaction) {
     try {
+
+      // Verificar permissões
+      const member = interaction.member;
+      const hasPermission = member.permissions.has(PermissionFlagsBits.ManageChannels) || 
+                           member.roles.cache.has(config.ticketSettings.adminRoleId);
+      
+      if (!hasPermission) {
+        return interaction.editReply('Você não tem permissão.');
+      }
+
       // Criar menu de seleção de prioridade
       const row = new ActionRowBuilder()
         .addComponents(

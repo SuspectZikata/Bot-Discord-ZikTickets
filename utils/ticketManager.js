@@ -2,7 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const { 
   ChannelType, 
-  PermissionFlagsBits, 
+  PermissionFlagsBits,
+  MessageFlags, 
   EmbedBuilder, 
   ActionRowBuilder, 
   ButtonBuilder, 
@@ -49,7 +50,8 @@ async function createTicket(interaction, ticketType) {
   if (userTickets.length >= config.ticketSettings.maxTicketsPerUser) {
     return {
       success: false,
-      message: `Você já possui ${userTickets.length} tickets abertos. Por favor, feche algum antes de abrir um novo.`
+      message: `Você já possui ${userTickets.length} tickets abertos. Por favor, feche algum antes de abrir um novo.`,
+      flags: MessageFlags.Ephemeral
     };
   }
   
@@ -58,7 +60,8 @@ async function createTicket(interaction, ticketType) {
   if (!typeInfo) {
     return {
       success: false,
-      message: 'Tipo de ticket inválido.'
+      message: 'Tipo de ticket inválido.',
+      flags: MessageFlags.Ephemeral
     };
   }
   
@@ -206,14 +209,16 @@ async function createTicket(interaction, ticketType) {
     
     return {
       success: true,
-      message: 'Ticket criado com sucesso!',
-      channel: channel
+      message: `Ticket criado com sucesso! Acesse-o em ${channel}.`,
+      channel: channel,
+      flags: MessageFlags.Ephemeral
     };
   } catch (error) {
     console.error('Erro ao criar o ticket:', error);
     return {
       success: false,
-      message: 'Ocorreu um erro ao criar o ticket. Por favor, tente novamente.'
+      message: 'Ocorreu um erro ao criar o ticket. Por favor, tente novamente.',
+      flags: MessageFlags.Ephemeral
     };
   }
 }
@@ -228,7 +233,8 @@ async function closeTicket(interaction, ticketId, closedBy) {
   if (ticketIndex === -1) {
     return {
       success: false,
-      message: 'Ticket não encontrado.'
+      message: 'Ticket não encontrado.',
+      flags: MessageFlags.Ephemeral
     };
   }
   
@@ -236,7 +242,8 @@ async function closeTicket(interaction, ticketId, closedBy) {
   if (ticket.status === 'closed') {
     return {
       success: false,
-      message: 'Este ticket já está fechado.'
+      message: 'Este ticket já está fechado.',
+      flags: MessageFlags.Ephemeral
     };
   }
   
@@ -265,7 +272,8 @@ async function closeTicket(interaction, ticketId, closedBy) {
     if (!channel) {
       return {
         success: false,
-        message: 'Canal do ticket não encontrado.'
+        message: 'Canal do ticket não encontrado.',
+        flags: MessageFlags.Ephemeral
       };
     }
     
@@ -321,13 +329,15 @@ async function closeTicket(interaction, ticketId, closedBy) {
     
     return {
       success: true,
-      message: 'Ticket fechado com sucesso!'
+      message: 'Ticket fechado com sucesso!',
+      flags: MessageFlags.Ephemeral
     };
   } catch (error) {
     console.error('Erro ao fechar o ticket:', error);
     return {
       success: false,
-      message: 'Ocorreu um erro ao fechar o ticket. Por favor, tente novamente.'
+      message: 'Ocorreu um erro ao fechar o ticket. Por favor, tente novamente.',
+      flags: MessageFlags.Ephemeral
     };
   }
 }
@@ -341,7 +351,8 @@ async function claimTicket(interaction, ticketId, userId) {
   if (ticketIndex === -1) {
     return {
       success: false,
-      message: 'Ticket não encontrado.'
+      message: 'Ticket não encontrado.',
+      flags: MessageFlags.Ephemeral
     };
   }
   
@@ -349,14 +360,16 @@ async function claimTicket(interaction, ticketId, userId) {
   if (ticket.status === 'closed') {
     return {
       success: false,
-      message: 'Não é possível atender um ticket fechado.'
+      message: 'Não é possível atender um ticket fechado.',
+      flags: MessageFlags.Ephemeral
     };
   }
   
   if (ticket.claimedBy === userId) {
     return {
       success: false,
-      message: 'Você já está atendendo este ticket.'
+      message: 'Você já está atendendo este ticket.',
+      flags: MessageFlags.Ephemeral
     };
   }
   
@@ -377,13 +390,15 @@ async function claimTicket(interaction, ticketId, userId) {
     return {
       success: true,
       message: 'Ticket atendido com sucesso!',
-      embed: embed
+      embed: embed,
+      flags: MessageFlags.Ephemeral
     };
   } catch (error) {
     console.error('Erro ao atender o ticket:', error);
     return {
       success: false,
-      message: 'Ocorreu um erro ao atender o ticket. Por favor, tente novamente.'
+      message: 'Ocorreu um erro ao atender o ticket. Por favor, tente novamente.',
+      flags: MessageFlags.Ephemeral
     };
   }
 }
@@ -397,7 +412,8 @@ async function unclaimTicket(interaction, ticketId, userId) {
   if (ticketIndex === -1) {
     return {
       success: false,
-      message: 'Ticket não encontrado.'
+      message: 'Ticket não encontrado.',
+      flags: MessageFlags.Ephemeral
     };
   }
   
@@ -405,21 +421,24 @@ async function unclaimTicket(interaction, ticketId, userId) {
   if (ticket.status === 'closed') {
     return {
       success: false,
-      message: 'Não é possível abdicar de um ticket fechado.'
+      message: 'Não é possível abdicar de um ticket fechado.',
+      flags: MessageFlags.Ephemeral
     };
   }
   
   if (!ticket.claimedBy) {
     return {
       success: false,
-      message: 'Este ticket não está sendo atendido por ninguém.'
+      message: 'Este ticket não está sendo atendido por ninguém.',
+      flags: MessageFlags.Ephemeral
     };
   }
   
   if (ticket.claimedBy !== userId && !interaction.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
     return {
       success: false,
-      message: 'Você não pode abdicar de um ticket que não está atendendo.'
+      message: 'Você não pode abdicar de um ticket que não está atendendo.',
+      flags: MessageFlags.Ephemeral
     };
   }
   
@@ -444,13 +463,15 @@ async function unclaimTicket(interaction, ticketId, userId) {
     return {
       success: true,
       message: 'Você abdicou do atendimento deste ticket com sucesso!',
-      embed: embed
+      embed: embed,
+      flags: MessageFlags.Ephemeral
     };
   } catch (error) {
     console.error('Erro ao abdicar do ticket:', error);
     return {
       success: false,
-      message: 'Ocorreu um erro ao abdicar do ticket. Por favor, tente novamente.'
+      message: 'Ocorreu um erro ao abdicar do ticket. Por favor, tente novamente.',
+      flags: MessageFlags.Ephemeral
     };
   }
 }
@@ -464,7 +485,8 @@ async function transferTicket(interaction, ticketId, newUserId) {
   if (ticketIndex === -1) {
     return {
       success: false,
-      message: 'Ticket não encontrado.'
+      message: 'Ticket não encontrado.',
+      flags: MessageFlags.Ephemeral
     };
   }
   
@@ -472,14 +494,16 @@ async function transferTicket(interaction, ticketId, newUserId) {
   if (ticket.status === 'closed') {
     return {
       success: false,
-      message: 'Não é possível transferir um ticket fechado.'
+      message: 'Não é possível transferir um ticket fechado.',
+      flags: MessageFlags.Ephemeral
     };
   }
   
   if (ticket.claimedBy === newUserId) {
     return {
       success: false,
-      message: 'Este ticket já está sendo atendido por este usuário.'
+      message: 'Este ticket já está sendo atendido por este usuário.',
+      flags: MessageFlags.Ephemeral
     };
   }
   
@@ -504,13 +528,15 @@ async function transferTicket(interaction, ticketId, newUserId) {
     return {
       success: true,
       message: 'Ticket transferido com sucesso!',
-      embed: embed
+      embed: embed,
+      flags: MessageFlags.Ephemeral
     };
   } catch (error) {
     console.error('Erro ao transferir o ticket:', error);
     return {
       success: false,
-      message: 'Ocorreu um erro ao transferir o ticket. Por favor, tente novamente.'
+      message: 'Ocorreu um erro ao transferir o ticket. Por favor, tente novamente.',
+      flags: MessageFlags.Ephemeral
     };
   }
 }
@@ -525,7 +551,8 @@ async function addUserToTicket(interaction, ticketId, userId) {
   if (ticketIndex === -1) {
     return {
       success: false,
-      message: 'Ticket não encontrado.'
+      message: 'Ticket não encontrado.',
+      flags: MessageFlags.Ephemeral
     };
   }
   
@@ -533,14 +560,16 @@ async function addUserToTicket(interaction, ticketId, userId) {
   if (ticket.status === 'closed') {
     return {
       success: false,
-      message: 'Não é possível adicionar usuários a um ticket fechado.'
+      message: 'Não é possível adicionar usuários a um ticket fechado.',
+      flags: MessageFlags.Ephemeral
     };
   }
   
   if (ticket.participants.includes(userId)) {
     return {
       success: false,
-      message: 'Este usuário já está no ticket.'
+      message: 'Este usuário já está no ticket.',
+      flags: MessageFlags.Ephemeral
     };
   }
   
@@ -550,7 +579,8 @@ async function addUserToTicket(interaction, ticketId, userId) {
     if (!channel) {
       return {
         success: false,
-        message: 'Canal do ticket não encontrado.'
+        message: 'Canal do ticket não encontrado.',
+        flags: MessageFlags.Ephemeral
       };
     }
     
@@ -572,20 +602,23 @@ async function addUserToTicket(interaction, ticketId, userId) {
       
       return {
         success: true,
-        message: `<@${userId}> foi adicionado ao ticket com sucesso!`
+        message: `<@${userId}> foi adicionado ao ticket com sucesso!`,
+        flags: MessageFlags.Ephemeral
       };
     } catch (error) {
       console.error('Erro ao buscar usuário:', error);
       return {
         success: false,
-        message: 'Usuário não encontrado. Verifique se o ID está correto.'
+        message: 'Usuário não encontrado. Verifique se o ID está correto.',
+        flags: MessageFlags.Ephemeral
       };
     }
   } catch (error) {
     console.error('Erro ao adicionar usuário ao ticket:', error);
     return {
       success: false,
-      message: 'Ocorreu um erro ao adicionar o usuário ao ticket. Por favor, tente novamente.'
+      message: 'Ocorreu um erro ao adicionar o usuário ao ticket. Por favor, tente novamente.',
+      flags: MessageFlags.Ephemeral
     };
   }
 }
@@ -600,7 +633,8 @@ async function removeUserFromTicket(interaction, ticketId, userId) {
   if (ticketIndex === -1) {
     return {
       success: false,
-      message: 'Ticket não encontrado.'
+      message: 'Ticket não encontrado.',
+      flags: MessageFlags.Ephemeral
     };
   }
   
@@ -610,7 +644,8 @@ async function removeUserFromTicket(interaction, ticketId, userId) {
   if (ticket.userId === userId) {
     return {
       success: false,
-      message: 'Não é possível remover o criador do ticket.'
+      message: 'Não é possível remover o criador do ticket.',
+      flags: MessageFlags.Ephemeral
     };
   }
   
@@ -618,7 +653,8 @@ async function removeUserFromTicket(interaction, ticketId, userId) {
   if (!ticket.participants.includes(userId)) {
     return {
       success: false,
-      message: 'Este usuário não está no ticket.'
+      message: 'Este usuário não está no ticket.',
+      flags: MessageFlags.Ephemeral
     };
   }
   
@@ -628,7 +664,8 @@ async function removeUserFromTicket(interaction, ticketId, userId) {
     if (!channel) {
       return {
         success: false,
-        message: 'Canal do ticket não encontrado.'
+        message: 'Canal do ticket não encontrado.',
+        flags: MessageFlags.Ephemeral
       };
     }
     
@@ -652,20 +689,23 @@ async function removeUserFromTicket(interaction, ticketId, userId) {
       
       return {
         success: true,
-        message: `<@${userId}> foi removido do ticket com sucesso!`
+        message: `<@${userId}> foi removido do ticket com sucesso!`,
+        flags: MessageFlags.Ephemeral
       };
     } catch (error) {
       console.error('Erro ao buscar usuário:', error);
       return {
         success: false,
-        message: 'Usuário não encontrado. Verifique se o ID está correto.'
+        message: 'Usuário não encontrado. Verifique se o ID está correto.',
+        flags: MessageFlags.Ephemeral
       };
     }
   } catch (error) {
     console.error('Erro ao remover usuário do ticket:', error);
     return {
       success: false,
-      message: 'Ocorreu um erro ao remover o usuário do ticket. Por favor, tente novamente.'
+      message: 'Ocorreu um erro ao remover o usuário do ticket. Por favor, tente novamente.',
+      flags: MessageFlags.Ephemeral
     };
   }
 }
@@ -679,7 +719,8 @@ async function setTicketPriority(interaction, ticketId, priority) {
   if (ticketIndex === -1) {
     return {
       success: false,
-      message: 'Ticket não encontrado.'
+      message: 'Ticket não encontrado.',
+      flags: MessageFlags.Ephemeral
     };
   }
   
@@ -687,14 +728,16 @@ async function setTicketPriority(interaction, ticketId, priority) {
   if (ticket.status === 'closed') {
     return {
       success: false,
-      message: 'Não é possível alterar a prioridade de um ticket fechado.'
+      message: 'Não é possível alterar a prioridade de um ticket fechado.',
+      flags: MessageFlags.Ephemeral
     };
   }
   
   if (ticket.priority === priority) {
     return {
       success: false,
-      message: `Este ticket já está com prioridade ${priority}.`
+      message: `Este ticket já está com prioridade ${priority}.`,
+      flags: MessageFlags.Ephemeral
     };
   }
   
@@ -739,13 +782,15 @@ async function setTicketPriority(interaction, ticketId, priority) {
     return {
       success: true,
       message: `Prioridade alterada para ${priority} com sucesso!`,
-      embed: embed
+      embed: embed,
+      flags: MessageFlags.Ephemeral
     };
   } catch (error) {
     console.error('Erro ao definir a prioridade do ticket:', error);
     return {
       success: false,
-      message: 'Ocorreu um erro ao alterar a prioridade do ticket. Por favor, tente novamente.'
+      message: 'Ocorreu um erro ao alterar a prioridade do ticket. Por favor, tente novamente.',
+      flags: MessageFlags.Ephemeral
     };
   }
 }
@@ -774,7 +819,7 @@ function getTicketStats() {
 }
 
 // Função auxiliar para formatar duração
-function formatDuration( ms) {
+function formatDuration(ms) {
   const seconds = Math.floor(ms / 1000);
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);

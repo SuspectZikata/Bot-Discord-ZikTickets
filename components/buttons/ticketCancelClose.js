@@ -1,8 +1,11 @@
 const { 
-  EmbedBuilder 
+  EmbedBuilder,
+  MessageFlags,
+  PermissionFlagsBits
 } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
+const config = require('../../config.json');
 
 module.exports = {
   customId: 'ticket_cancel_close',
@@ -13,6 +16,19 @@ module.exports = {
     await interaction.deferReply();
     
     try {
+
+      // Verificar permissões
+      const member = interaction.member;
+      const hasPermission = member.permissions.has(PermissionFlagsBits.ManageChannels) || 
+                           member.roles.cache.has(config.ticketSettings.adminRoleId);
+      
+      if (!hasPermission) {
+        return interaction.reply({
+          content: 'Você não tem permissão.',
+          flags: MessageFlags.Ephemeral
+        });
+      }      
+
       // Obter ticket do banco de dados
       const dbPath = path.join(__dirname, '../../database/tickets.json');
       const db = JSON.parse(fs.readFileSync(dbPath, 'utf8'));

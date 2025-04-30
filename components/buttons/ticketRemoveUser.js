@@ -3,13 +3,28 @@ const {
   TextInputBuilder, 
   TextInputStyle,
   MessageFlags, 
-  ActionRowBuilder 
+  ActionRowBuilder,
+  PermissionFlagsBits
 } = require('discord.js');
+const config = require('../../config.json');
 
 module.exports = {
   customId: 'ticket_remove_user',
   async execute(client, interaction) {
     try {
+
+      // Verificar permissões
+      const member = interaction.member;
+      const hasPermission = member.permissions.has(PermissionFlagsBits.ManageChannels) || 
+                           member.roles.cache.has(config.ticketSettings.adminRoleId);
+      
+      if (!hasPermission) {
+        return interaction.reply({
+          content: 'Você não tem permissão para remover usuários a este ticket.',
+          flags: MessageFlags.Ephemeral
+        });
+      }
+
       // Criar modal
       const modal = new ModalBuilder()
         .setCustomId('remove_user_modal')

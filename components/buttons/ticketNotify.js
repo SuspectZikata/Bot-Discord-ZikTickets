@@ -1,5 +1,7 @@
 const { 
-  EmbedBuilder 
+  EmbedBuilder,
+  MessageFlags,
+  PermissionFlagsBits
 } = require('discord.js');
 const config = require('../../config.json');
 
